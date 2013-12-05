@@ -3,14 +3,13 @@
 
 #include "A3Interfaces.hpp"
 #include <array>
-#include <memory>
 #include <string>
 
 class WordNode : public iWordNode {
 
 	char value;
 	bool whole;
-	std::shared_ptr<WordNode> children[26];
+	WordNode* children[26];
 	
 public:
 	
@@ -19,7 +18,7 @@ public:
 	 *
 	 */
 	WordNode() : iWordNode() {
-		whole = true;
+		whole = false;
 		for (int i = 0; i < 26; i++) {
 			children[i] = nullptr;
 		}
@@ -30,28 +29,36 @@ public:
 	 * exist, return nullptr.
 	 */
 	virtual WordNode* getChild(char letter) {
-		return nullptr;
+		return children[letter - 'a'];
 	}
 
 	/**
 	 * Recursive helper function that will count the number of immediate children
 	 * and add them to the total and return.
 	 */
-	size_t getTotalNumChildren(WordNode* wNode) const {
+	size_t getNumChildWords(WordNode* wNode) const {
 		if (!wNode) return 0;
 		
 		size_t total = 0;
+
+		total += (wNode->whole) ? 1 : 0;
+
+		for (int i = 0; i < 26; i++) {
+			total += getNumChildWords(children[i]);
+		}
 
 		return total;
 	}
 
 	/**
-	 * Returns the total number of children that this node and all of its
-	 * subtrees contain.
+	 * Returns the total number of child words that this node and all of its
+	 * subtrees contain, not including this node itself.
 	 */
-	virtual size_t getNumChildren() const {
+	virtual size_t getNumChildWords() const {
 		size_t total = 0;
-		
+		for (int i = 0; i < 26; i++) {
+			total += getNumChildWords(children[i]);
+		}
 		return total;
 	}
 
@@ -62,13 +69,21 @@ public:
 		return whole;
 	}
 
+	void setWhole(bool w) {
+		whole = w;
+	}
+
+	void setValue(char val) {
+		value = val;
+	}
+
 	/**
 	 * Virtual destructor that ensures correctly deallocating any memory
 	 * that it is responsible for
 	 */
 	virtual ~WordNode() {
 		for (int i = 0; i < 26; i++) {
-			children[i].reset();
+			children[i] = nullptr;
 		}
 	}
 
@@ -87,9 +102,7 @@ public:
 	/**
 	 * Default constructor that will construct this object safely and correctly
 	 */
-	DictionaryTree() : iDictionaryTree() {
-		_root = new WordNode();
-	}
+	DictionaryTree() : iDictionaryTree(), _root() {}
 
 	/**
 	 * Inserts a whole word into the tree.
@@ -98,6 +111,20 @@ public:
 	 * word, it will mark the word as a whole.
 	 */
 	virtual void insert(const char* word) {
+		if (!_root) {
+			_root = new WordNode();
+		}
+
+		WordNode* cur = _root;
+
+		for (int i = 0; word[i]; i++) {
+			cur = cur->getChild(word[i]);
+			if (!cur) {
+				cur = new WordNode();
+				cur->setValue(word[i]);
+			}
+		}
+		cur->setWhole(true);
 	}
 
 	/**
@@ -105,7 +132,7 @@ public:
 	 * If word is found, pointer is returned, and a nullptr is returned otherwise.
 	 */
 	virtual WordNode* getNodeForWord(const char* word) {
-		if (!word) return nullptr;
+		if (!word || !_root) return nullptr;
 
 		WordNode* cur = _root;
 		int i = 0;

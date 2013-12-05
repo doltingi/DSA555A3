@@ -21,10 +21,10 @@ public:
     virtual iWordNode* getChild(char) = 0;
 
     /**
-        Returns the total number of children that this node and all of its
-        subtrees contain.
+        Returns the total number of child words that this node and all of its
+        subtrees contain, not including this node itself.
      */
-    virtual size_t getNumChildren() const = 0;
+    virtual size_t getNumChildWords() const = 0;
 
     /**
         Returns true if this instance is at the end of a whole word,
