@@ -108,23 +108,41 @@ public:
 	DictionaryTree() : iDictionaryTree(), _root() {}
 
 	void insert(WordNode* cur, const char* word, int i) {
-    WordNode* test = cur->getChild(word[i]);
+		
 		// has yet to reach the end of a word
-    if (word[i]) {
+		char char_pos = word[i];
+		if (char_pos) {
 
-      if (cur->getChild(word[i]) && word[i + 1]) insert(cur->getChild(word[i]), word, ++i);
+			// if the current character already has next character of the word
+			if (cur && cur->getChild(char_pos)) {
+				// check if the next char is the end, if so, replace the whole
+				// word marker
+				if (!word[i + 1]) {
+					WordNode* child = cur->getChild(char_pos);
+					child->setWhole(true);
+					cur->setChild(child, char_pos - 'a');
+				} else {
 
-      if (!cur->getChild(word[i])) {
-			  WordNode* child = new WordNode();
-			  child->setValue(word[i]);
-      } else {
+					// insertion traverses to the next character among the word
+					insert(cur->getChild(char_pos), word, ++i);
+				}
+			} else {
 
-      if (!word[i + 1]) child->setWhole(true);
-			cur->setChild(child, word[i] - 'a');
-      if (word[i + 1]) {
-        insert(cur->getChild(word[++i]), word, i);
-      }
-    }
+				// if it's first time visiting the child, create and append
+				WordNode* child = new WordNode();
+				child->setValue(char_pos);
+
+				// if the child is the end of the word, set it as the whole
+				// word marker
+				if (!word[i + 1]) child->setWhole(true);
+				
+				cur->setChild(child, word[i] - 'a');
+				
+				if (word[i + 1]) {
+					insert(cur->getChild(char_pos), word, ++i);
+				}
+			}
+		}
 	}
 
 	/**
@@ -153,10 +171,10 @@ public:
 		do {
 			cur = cur->getChild(word[i]);
 			i++;
-		} while (i < strlen(word) && cur != nullptr);
+		} while (cur->getChild(word[i]) != nullptr && i < strlen(word));
 			
 
-		return (i == strlen(word)) && (cur->isWholeWord()) ?
+		return (i == strlen(word)) && cur && (cur->isWholeWord()) ?
 			_root->getChild(word[0]) : nullptr;
 	}
 

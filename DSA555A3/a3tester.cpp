@@ -81,7 +81,10 @@ bool testPart2NullThenInsertThenNotNull(DictionaryTree& tree, fstream& wordsStre
         if (!word.size()) continue;
 
         trim(word);
-
+		if (word == "adgar") {
+			cout << "hi" << endl;
+		}
+		cout << "testing the word : " << word << "." << endl;
         iWordNode* wordNode = tree.getNodeForWord(word.c_str());
         SILENT_ASSERT(!wordNode || !wordNode->isWholeWord(),
             "tree.getNodeForWord(\"" << word << "\") == 0 || wordNode->isWholeWord() == false");
@@ -212,12 +215,14 @@ int main()
 
     msg("Creating empty dictionary tree...");
     DictionaryTree tree;
-	tree.insert("a");
-  tree.insert("aa");
-	WordNode* node = tree.getNodeForWord("a");
-	std::cout << node->isWholeWord() << std::endl;
+//	tree.insert("");
+//	tree.insert("aaaa");
+//	tree.insert("aaa");
+
+//	WordNode* node = tree.getNodeForWord("a");
+//	std::cout << node->isWholeWord() << std::endl;
 	//    if (overallSuccess) testPart1AllWordsReturnNull(tree, wordsStream);
-//    if (overallSuccess) testPart2NullThenInsertThenNotNull(tree, wordsStream);
+    if (overallSuccess) testPart2NullThenInsertThenNotNull(tree, wordsStream);
 /*    if (overallSuccess) testPart3NavigateWordManually(tree, wordsStream);
     if (overallSuccess) testPart4CountChildWords(tree, wordsStream); */
 
