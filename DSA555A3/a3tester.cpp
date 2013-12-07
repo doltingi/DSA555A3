@@ -212,13 +212,15 @@ int main()
 
     msg("Creating empty dictionary tree...");
     DictionaryTree tree;
-
-//    if (overallSuccess) testPart1AllWordsReturnNull(tree, wordsStream);
-    if (overallSuccess) testPart2NullThenInsertThenNotNull(tree, wordsStream);
+	tree.insert("a");
+	WordNode* node = tree.getNodeForWord("a");
+	std::cout << node->isWholeWord() << std::endl;
+	//    if (overallSuccess) testPart1AllWordsReturnNull(tree, wordsStream);
+//    if (overallSuccess) testPart2NullThenInsertThenNotNull(tree, wordsStream);
 /*    if (overallSuccess) testPart3NavigateWordManually(tree, wordsStream);
     if (overallSuccess) testPart4CountChildWords(tree, wordsStream); */
 
-    finish();
+//    finish();
 
     return 0;
 }

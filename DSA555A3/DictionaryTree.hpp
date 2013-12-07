@@ -17,7 +17,7 @@ public:
 	 * Default constructor
 	 *
 	 */
-	WordNode() : iWordNode() {
+	WordNode() : iWordNode(), value() {
 		whole = false;
 		for (int i = 0; i < 26; i++) {
 			children[i] = nullptr;
@@ -111,20 +111,17 @@ public:
 	 * word, it will mark the word as a whole.
 	 */
 	virtual void insert(const char* word) {
-		if (!_root) {
-			_root = new WordNode();
-		}
-
-		WordNode* cur = _root;
+		if (!word) return;
+		if (!_root) _root = new WordNode();
 
 		for (int i = 0; word[i]; i++) {
-			cur = cur->getChild(word[i]);
-			if (!cur) {
-				cur = new WordNode();
-				cur->setValue(word[i]);
+			_root = _root->getChild(word[i]);
+			if (!_root) {
+				_root= new WordNode();
+				_root->setValue(word[i]);
 			}
 		}
-		cur->setWhole(true);
+		_root->setWhole(true);
 	}
 
 	/**
