@@ -77,6 +77,9 @@ public:
 		value = val;
 	}
 
+	void setChild(WordNode* node, int index) {
+		children[index] = node;
+	}
 	/**
 	 * Virtual destructor that ensures correctly deallocating any memory
 	 * that it is responsible for
@@ -104,6 +107,26 @@ public:
 	 */
 	DictionaryTree() : iDictionaryTree(), _root() {}
 
+	void insert(WordNode* cur, const char* word, int i) {
+    WordNode* test = cur->getChild(word[i]);
+		// has yet to reach the end of a word
+    if (word[i]) {
+
+      if (cur->getChild(word[i]) && word[i + 1]) insert(cur->getChild(word[i]), word, ++i);
+
+      if (!cur->getChild(word[i])) {
+			  WordNode* child = new WordNode();
+			  child->setValue(word[i]);
+      } else {
+
+      if (!word[i + 1]) child->setWhole(true);
+			cur->setChild(child, word[i] - 'a');
+      if (word[i + 1]) {
+        insert(cur->getChild(word[++i]), word, i);
+      }
+    }
+	}
+
 	/**
 	 * Inserts a whole word into the tree.
 	 * If the word is not already in the tree, word node chain is created
@@ -111,17 +134,11 @@ public:
 	 * word, it will mark the word as a whole.
 	 */
 	virtual void insert(const char* word) {
-		if (!word) return;
+		if (!word || word == "") return;
 		if (!_root) _root = new WordNode();
-
-		for (int i = 0; word[i]; i++) {
-			_root = _root->getChild(word[i]);
-			if (!_root) {
-				_root= new WordNode();
-				_root->setValue(word[i]);
-			}
-		}
-		_root->setWhole(true);
+			
+		insert(*&_root, word, 0);
+	
 	}
 
 	/**

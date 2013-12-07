@@ -213,6 +213,7 @@ int main()
     msg("Creating empty dictionary tree...");
     DictionaryTree tree;
 	tree.insert("a");
+  tree.insert("aa");
 	WordNode* node = tree.getNodeForWord("a");
 	std::cout << node->isWholeWord() << std::endl;
 	//    if (overallSuccess) testPart1AllWordsReturnNull(tree, wordsStream);
