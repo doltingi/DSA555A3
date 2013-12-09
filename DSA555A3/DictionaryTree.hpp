@@ -29,7 +29,7 @@ public:
 	 * exist, return nullptr.
 	 */
 	virtual WordNode* getChild(char letter) {
-		return children[letter - 'a'];
+		return letter ? children[letter - 'a'] : nullptr;
 	}
 
 	/**
@@ -105,7 +105,9 @@ public:
 	/**
 	 * Default constructor that will construct this object safely and correctly
 	 */
-	DictionaryTree() : iDictionaryTree(), _root() {}
+	DictionaryTree() : iDictionaryTree() {
+		_root = new WordNode();
+	}
 
 	void insert(WordNode* cur, const char* word, int i) {
 		
@@ -167,11 +169,11 @@ public:
 		if (!word || !_root) return nullptr;
 
 		WordNode* cur = _root;
-		int i = 0;
+		size_t i = 0;
 		do {
 			cur = cur->getChild(word[i]);
 			i++;
-		} while (cur->getChild(word[i]) != nullptr && i < strlen(word));
+		} while (cur && i < strlen(word) && cur->getChild(word[i]) != nullptr);
 			
 
 		return (i == strlen(word)) && cur && (cur->isWholeWord()) ?

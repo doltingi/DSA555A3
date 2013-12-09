@@ -81,10 +81,7 @@ bool testPart2NullThenInsertThenNotNull(DictionaryTree& tree, fstream& wordsStre
         if (!word.size()) continue;
 
         trim(word);
-		if (word == "adgar") {
-			cout << "hi" << endl;
-		}
-		cout << "testing the word : " << word << "." << endl;
+
         iWordNode* wordNode = tree.getNodeForWord(word.c_str());
         SILENT_ASSERT(!wordNode || !wordNode->isWholeWord(),
             "tree.getNodeForWord(\"" << word << "\") == 0 || wordNode->isWholeWord() == false");
@@ -168,6 +165,8 @@ bool testPart4CountChildWords(DictionaryTree& tree, fstream& wordsStream){
         while (getline(wordsStream, word2), trim(word2),
             !wordsStream.fail() && regex_match(word2, reg)) numWords++;
 
+		cout << ":::::::::::::::: PASSED WHILE ::::::::::::::::" << endl;
+
         // Count is correct?
         iWordNode* wordNode = tree.getNodeForWord(word.c_str());
         SILENT_ASSERT_NE(wordNode, 0,
@@ -205,7 +204,7 @@ int main()
 
     // Get list of words
     msg("Opening words.txt");
-    fstream wordsStream("words.txt", fstream::in);
+    fstream wordsStream("words.txt", fstream::in | fstream::binary);
 
     if (wordsStream.fail()) {
         ss << "Failed to open words.txt, aborting...";
@@ -215,18 +214,21 @@ int main()
 
     msg("Creating empty dictionary tree...");
     DictionaryTree tree;
-//	tree.insert("");
-//	tree.insert("aaaa");
-//	tree.insert("aaa");
 
-//	WordNode* node = tree.getNodeForWord("a");
-//	std::cout << node->isWholeWord() << std::endl;
-	//    if (overallSuccess) testPart1AllWordsReturnNull(tree, wordsStream);
-    if (overallSuccess) testPart2NullThenInsertThenNotNull(tree, wordsStream);
-/*    if (overallSuccess) testPart3NavigateWordManually(tree, wordsStream);
-    if (overallSuccess) testPart4CountChildWords(tree, wordsStream); */
+	tree.insert("a");
+	tree.insert("aa");
+	tree.insert("aaa");
+	tree.insert("tree");
+	iWordNode* wordNode = tree.getNodeForWord("a");
+	cout << "THIS SHOULD RETURN 2 : " << wordNode->getNumChildWords() << endl;
 
-//    finish();
+    //if (overallSuccess) testPart1AllWordsReturnNull(tree, wordsStream);
+    //if (overallSuccess) testPart2NullThenInsertThenNotNull(tree, wordsStream);
+    //if (overallSuccess) testPart3NavigateWordManually(tree, wordsStream);
+    //if (overallSuccess) testPart4CountChildWords(tree, wordsStream);
+
+
+    finish();
 
     return 0;
 }
